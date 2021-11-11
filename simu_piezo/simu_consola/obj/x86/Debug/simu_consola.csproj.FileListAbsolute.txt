@@ -1,0 +1,6 @@
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/bin/Debug/simu_consola.exe
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/bin/Debug/simu_consola.pdb
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/obj/x86/Debug/simu_consola.csprojAssemblyReference.cache
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/obj/x86/Debug/simu_consola.csproj.CoreCompileInputs.cache
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/obj/x86/Debug/simu_consola.exe
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu_consola/obj/x86/Debug/simu_consola.pdb

@@ -1,25 +1,36 @@
 // Deteccion de disparo para SIMTAP
 
+// Descomentar la siguiente linea para simulacion del piezo  
+#define SIMU
+
+// Definicion de pines
 #define ADC_PIN 3
 #define LASER_PIN 3
 #define DISP_INVALIDO_PIN 2
 
-
 // Umbrales para la deteccion
-#define UMBRAL_1 40
+#define UMBRAL_1 30
 #define UMBRAL_2 20
 
 // Cantidad de picos a detectar en la ventana 2
-#define PICOS_VENT_2 2
+#define PICOS_VENT_2 1
 
 // Duracion de las ventanas de deteccion en microsegundos
-#define T1 4000
-#define T2 4000
-#define T3 4000
+
+#ifndef SIMU
+    #define T1 700
+    #define T2 1300
+    #define T3 9600
+#else
+    #define T1 70000
+    #define T2 4000
+    #define T3 4000
+#endif
 
 // Duracion del pulso del laser en microsegundos
 #define T_LASER 500000
 
+////// Declaracion de variables ////////
 enum Estados {
   ESPERA_SIGNAL,
   VENTANA_1,
@@ -32,6 +43,7 @@ Estados estado = ESPERA_SIGNAL;
 unsigned long t_0, t;
 int adc_val;
 int cant_picos;  //Cantidad de picos que superan el umbral_x
+////////////////////////////////////////
 
 /////// Simulacion de muestreo ////////
 
@@ -54,7 +66,6 @@ int simula_muestreo()
     return 0;
 
 }
-
 ////////////////////////////////////////
 
 void setup()
@@ -72,8 +83,11 @@ void loop()
     t = micros();
 
     // Muestreo 
-    //adc_val = analogRead(ADC_PIN);    
+#ifndef SIMU 
+    adc_val = analogRead(ADC_PIN);    
+#else
     adc_val = simula_muestreo();   // Solo para simulacion
+#endif
 
     switch(estado)
     {

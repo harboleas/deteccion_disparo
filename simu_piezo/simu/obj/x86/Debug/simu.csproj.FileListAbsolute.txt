@@ -1,0 +1,12 @@
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/simu.exe
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/simu.pdb
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/obj/x86/Debug/simu.csprojAssemblyReference.cache
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/obj/x86/Debug/simu.csproj.CoreCompileInputs.cache
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/obj/x86/Debug/simu.exe
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/obj/x86/Debug/simu.pdb
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/OxyPlot.dll
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/OxyPlot.GtkSharp.dll
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/OxyPlot.pdb
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/OxyPlot.xml
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/bin/Debug/OxyPlot.GtkSharp.pdb
+/home/nan/Proyectos/deteccion_disparo/simu_piezo/simu/obj/x86/Debug/simu.csproj.CopyComplete

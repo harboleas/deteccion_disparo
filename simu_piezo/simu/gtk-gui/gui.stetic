@@ -7,7 +7,7 @@
     <widget-library name="../bin/Debug/simu.exe" internal="true" />
     <widget-library name="../../packages/OxyPlot.GtkSharp.1.0.0/lib/net45/OxyPlot.GtkSharp.dll" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="739 657">
+  <widget class="Gtk.Window" id="MainWindow" design-size="808 656">
     <action-group name="Default">
       <action id="openAction">
         <property name="Type">Action</property>
@@ -60,7 +60,7 @@
               <widget class="Gtk.Label" id="label2">
                 <property name="MemberName" />
                 <property name="WidthRequest">168</property>
-                <property name="LabelProp" translatable="yes">Arduino Port</property>
+                <property name="LabelProp" translatable="yes">Puerto del Arduino</property>
               </widget>
               <packing>
                 <property name="Position">0</property>
@@ -74,6 +74,7 @@
                 <property name="MemberName" />
                 <property name="IsTextCombo">True</property>
                 <property name="Items" translatable="yes" />
+                <signal name="Changed" handler="OnPortChange" />
               </widget>
               <packing>
                 <property name="Position">1</property>
@@ -83,10 +84,12 @@
             <child>
               <widget class="Gtk.Button" id="conectar">
                 <property name="MemberName" />
+                <property name="Sensitive">False</property>
                 <property name="CanFocus">True</property>
                 <property name="Type">TextOnly</property>
                 <property name="Label" translatable="yes">Conectar</property>
                 <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnConectar" />
               </widget>
               <packing>
                 <property name="Position">2</property>
@@ -107,10 +110,12 @@
           <widget class="Gtk.Button" id="enviar">
             <property name="MemberName" />
             <property name="HeightRequest">48</property>
+            <property name="Sensitive">False</property>
             <property name="CanFocus">True</property>
             <property name="Type">TextOnly</property>
             <property name="Label" translatable="yes">Enviar</property>
             <property name="UseUnderline">True</property>
+            <signal name="Clicked" handler="OnEnviar" />
           </widget>
           <packing>
             <property name="Position">3</property>

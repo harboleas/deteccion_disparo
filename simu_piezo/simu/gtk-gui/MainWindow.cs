@@ -69,7 +69,7 @@ public partial class MainWindow
 		this.label2 = new global::Gtk.Label();
 		this.label2.WidthRequest = 168;
 		this.label2.Name = "label2";
-		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Arduino Port");
+		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Puerto del Arduino");
 		this.hbox1.Add(this.label2);
 		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.label2]));
 		w4.Position = 0;
@@ -83,6 +83,7 @@ public partial class MainWindow
 		w5.Position = 1;
 		// Container child hbox1.Gtk.Box+BoxChild
 		this.conectar = new global::Gtk.Button();
+		this.conectar.Sensitive = false;
 		this.conectar.CanFocus = true;
 		this.conectar.Name = "conectar";
 		this.conectar.UseUnderline = true;
@@ -100,6 +101,7 @@ public partial class MainWindow
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.enviar = new global::Gtk.Button();
 		this.enviar.HeightRequest = 48;
+		this.enviar.Sensitive = false;
 		this.enviar.CanFocus = true;
 		this.enviar.Name = "enviar";
 		this.enviar.UseUnderline = true;
@@ -114,10 +116,13 @@ public partial class MainWindow
 		{
 			this.Child.ShowAll();
 		}
-		this.DefaultWidth = 739;
-		this.DefaultHeight = 657;
+		this.DefaultWidth = 808;
+		this.DefaultHeight = 656;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 		this.openAction.Activated += new global::System.EventHandler(this.OnOpenSignal);
+		this.combobox1.Changed += new global::System.EventHandler(this.OnPortChange);
+		this.conectar.Clicked += new global::System.EventHandler(this.OnConectar);
+		this.enviar.Clicked += new global::System.EventHandler(this.OnEnviar);
 	}
 }

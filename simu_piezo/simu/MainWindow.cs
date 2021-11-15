@@ -20,7 +20,6 @@ public partial class MainWindow : Gtk.Window
     {
         Build();
 
-
         plotView = new PlotView();
         plotView.SetSizeRequest(fixed1.Allocation.Width, fixed1.Allocation.Height);
         fixed1.Add(plotView);
@@ -41,7 +40,6 @@ public partial class MainWindow : Gtk.Window
         foreach (string port_name in port_names)
             combobox1.AppendText(port_name);
 
-
     }
 
     protected void OnDeleteEvent(object sender, DeleteEventArgs a)
@@ -50,7 +48,6 @@ public partial class MainWindow : Gtk.Window
         a.RetVal = true;
         if (port.IsOpen)
             port.Close();
-
     }
 
     protected void OnOpenSignal(object sender, EventArgs e)
@@ -70,6 +67,8 @@ public partial class MainWindow : Gtk.Window
             int sampling_size = int.Parse(lines[0].Split(',')[1]);
 
             float T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
+
+            label1.Text = string.Format("Multiplicador: {0}", (int)(1e-3 / T_sampling));
 
             const int START_DATA = 13;
             var plotModel = new PlotModel();
@@ -108,11 +107,34 @@ public partial class MainWindow : Gtk.Window
 
     protected void OnEnviar(object sender, EventArgs e)
     {
+        port.DiscardInBuffer();
+
         for (int i = 0; i < datos.Count; i++)
         {
             var dato = BitConverter.GetBytes(datos[i]);
             port.Write(dato, 0, 2);
+            if (port.BytesToRead > 0)
+                Console.WriteLine(i.ToString() + " : " + port.ReadLine());
+
             Thread.Sleep(1);
         }
+
+    }
+
+    protected void OnBuscarPuertos(object o, EventArgs args)
+    {
+
+        combobox1.RemoveText(0);
+
+        conectar.Sensitive = false;
+        enviar.Sensitive = false;
+        var port_names = Directory.GetFiles("/dev/", "ttyUSB*");
+        foreach (string port_name in port_names)
+            combobox1.AppendText(port_name);
+
+        port_names = Directory.GetFiles("/dev/", "ttyACM*");
+        foreach (string port_name in port_names)
+            combobox1.AppendText(port_name);
+
     }
 }

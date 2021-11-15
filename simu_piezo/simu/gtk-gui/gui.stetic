@@ -7,7 +7,7 @@
     <widget-library name="../bin/Debug/simu.exe" internal="true" />
     <widget-library name="../../packages/OxyPlot.GtkSharp.1.0.0/lib/net45/OxyPlot.GtkSharp.dll" />
   </import>
-  <widget class="Gtk.Window" id="MainWindow" design-size="808 656">
+  <widget class="Gtk.Window" id="MainWindow" design-size="808 689">
     <action-group name="Default">
       <action id="openAction">
         <property name="Type">Action</property>
@@ -53,6 +53,18 @@
           </packing>
         </child>
         <child>
+          <widget class="Gtk.Label" id="label1">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Multiplicador:</property>
+          </widget>
+          <packing>
+            <property name="Position">2</property>
+            <property name="AutoSize">True</property>
+            <property name="Expand">False</property>
+            <property name="Fill">False</property>
+          </packing>
+        </child>
+        <child>
           <widget class="Gtk.HBox" id="hbox1">
             <property name="MemberName" />
             <property name="Spacing">1</property>
@@ -82,6 +94,22 @@
               </packing>
             </child>
             <child>
+              <widget class="Gtk.Button" id="button1">
+                <property name="MemberName" />
+                <property name="CanFocus">True</property>
+                <property name="Type">TextOnly</property>
+                <property name="Label" translatable="yes">Refresh</property>
+                <property name="UseUnderline">True</property>
+                <signal name="Clicked" handler="OnBuscarPuertos" />
+              </widget>
+              <packing>
+                <property name="Position">2</property>
+                <property name="AutoSize">True</property>
+                <property name="Expand">False</property>
+                <property name="Fill">False</property>
+              </packing>
+            </child>
+            <child>
               <widget class="Gtk.Button" id="conectar">
                 <property name="MemberName" />
                 <property name="Sensitive">False</property>
@@ -92,7 +120,7 @@
                 <signal name="Clicked" handler="OnConectar" />
               </widget>
               <packing>
-                <property name="Position">2</property>
+                <property name="Position">3</property>
                 <property name="AutoSize">True</property>
                 <property name="Expand">False</property>
                 <property name="Fill">False</property>
@@ -100,7 +128,7 @@
             </child>
           </widget>
           <packing>
-            <property name="Position">2</property>
+            <property name="Position">3</property>
             <property name="AutoSize">True</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>
@@ -118,7 +146,7 @@
             <signal name="Clicked" handler="OnEnviar" />
           </widget>
           <packing>
-            <property name="Position">3</property>
+            <property name="Position">4</property>
             <property name="AutoSize">False</property>
             <property name="Expand">False</property>
             <property name="Fill">False</property>

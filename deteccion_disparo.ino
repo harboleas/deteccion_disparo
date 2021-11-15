@@ -9,22 +9,24 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_1 30
-#define UMBRAL_2 20
+#define UMBRAL_1 40
+#define UMBRAL_2 15
 
 // Cantidad de picos a detectar en la ventana 2
-#define PICOS_VENT_2 1
+#define PICOS_VENT_2 0
 
 // Duracion de las ventanas de deteccion en microsegundos
+#define T1 500L
+#define T2 1600L
+#define T3 7500L
 
+// Debido a que en la simulacion no puedo suministrar las muestrar
+// con la misma frecuencia que lo realiza el conversor AD
+// utilizo un multiplicador para la duracion de las ventanas
 #ifndef SIMU
-    #define T1 700
-    #define T2 1300
-    #define T3 9600
+    #define MULT 1L
 #else
-    #define T1 70000
-    #define T2 4000
-    #define T3 4000
+    #define MULT 25L
 #endif
 
 // Duracion del pulso del laser en microsegundos
@@ -39,7 +41,7 @@ enum Estados {
   DISP_INVALIDO,
   DISP_OK };
   
-Estados estado = ESPERA_SIGNAL;
+Estados estado;
 unsigned long t_0, t;
 int adc_val;
 int cant_picos;  //Cantidad de picos que superan el umbral_x
@@ -74,7 +76,7 @@ void setup()
     Serial.begin(115200);  // Solo para simulacion  
     pinMode(LASER_PIN, OUTPUT);
     pinMode(DISP_INVALIDO_PIN, OUTPUT);
-
+    estado = ESPERA_SIGNAL;
 }
 
 void loop()
@@ -89,22 +91,23 @@ void loop()
     adc_val = simula_muestreo();   // Solo para simulacion
 #endif
 
+// FSM
     switch(estado)
     {
         case ESPERA_SIGNAL:
             if (adc_val >= UMBRAL_1)
             {
-//                Serial.println(estado);
                 estado = VENTANA_1;
+                Serial.println(estado);
                 t_0 = t;
             }
             break;
 
         case VENTANA_1:
-            if (t - t_0 >= T1)
+            if (t - t_0 >= (T1 * MULT))
             {
-//                Serial.println(estado);
                 estado = VENTANA_2;
+                Serial.println(estado);
                 cant_picos = 0;
                 t_0 = t;
             }
@@ -113,26 +116,26 @@ void loop()
         case VENTANA_2:
             if (adc_val >= UMBRAL_1)
             {
-//                Serial.println(estado);
                 estado = DISP_INVALIDO;
+                Serial.println(estado);
                 t_0 = t;
             }
             else if (adc_val > UMBRAL_2)
                 cant_picos++;
 
-            if (t - t_0 >= T2)
+            if (t - t_0 >= (T2 * MULT))
             {
                 if(cant_picos >= PICOS_VENT_2)
                 {
-//                    Serial.println(estado);
                     estado = VENTANA_3;
+                    Serial.println(estado);
                     cant_picos = 0;
                     t_0 = t;
                 }
                 else
                 {
-//                    Serial.println(estado);
                     estado = DISP_INVALIDO;
+                    Serial.println(estado);
                     t_0 = t;
                 }
             }           
@@ -142,18 +145,18 @@ void loop()
            if (adc_val >= UMBRAL_2)
                 cant_picos++;
 
-            if (t - t_0 >= T3) 
-            {
+           if (t - t_0 >= (T3 * MULT)) 
+           {
                 if (cant_picos != 0)
                 {
-//                    Serial.println(estado);
                     estado = DISP_INVALIDO;
+                    Serial.println(estado);
                     t_0 = t;
                 }
                 else
                 {
-//                    Serial.println(estado);
                     estado = DISP_OK;
+                    Serial.println(estado);
                     t_0 = t;
                 }
             }
@@ -164,8 +167,8 @@ void loop()
             if (t - t_0 >= T_LASER)
             {
                 digitalWrite(DISP_INVALIDO_PIN, LOW);
-//                Serial.println(estado);
                 estado = ESPERA_SIGNAL;
+                Serial.println(estado);
             }
             break;
 
@@ -174,9 +177,9 @@ void loop()
             if (t - t_0 >= T_LASER)
             {
                 digitalWrite(LASER_PIN, LOW);
-//                Serial.println(estado);
                 estado = ESPERA_SIGNAL;
-            }
+                Serial.println(estado);
+           }
             break;
 
         default:

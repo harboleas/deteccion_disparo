@@ -13,11 +13,15 @@ public partial class MainWindow
 
 	private global::Gtk.Fixed fixed1;
 
+	private global::Gtk.Label label1;
+
 	private global::Gtk.HBox hbox1;
 
 	private global::Gtk.Label label2;
 
 	private global::Gtk.ComboBox combobox1;
+
+	private global::Gtk.Button button1;
 
 	private global::Gtk.Button conectar;
 
@@ -62,6 +66,15 @@ public partial class MainWindow
 		w3.Expand = false;
 		w3.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
+		this.label1 = new global::Gtk.Label();
+		this.label1.Name = "label1";
+		this.label1.LabelProp = global::Mono.Unix.Catalog.GetString("Multiplicador:");
+		this.vbox1.Add(this.label1);
+		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.label1]));
+		w4.Position = 2;
+		w4.Expand = false;
+		w4.Fill = false;
+		// Container child vbox1.Gtk.Box+BoxChild
 		this.hbox1 = new global::Gtk.HBox();
 		this.hbox1.Name = "hbox1";
 		this.hbox1.Spacing = 1;
@@ -71,16 +84,27 @@ public partial class MainWindow
 		this.label2.Name = "label2";
 		this.label2.LabelProp = global::Mono.Unix.Catalog.GetString("Puerto del Arduino");
 		this.hbox1.Add(this.label2);
-		global::Gtk.Box.BoxChild w4 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.label2]));
-		w4.Position = 0;
-		w4.Expand = false;
-		w4.Fill = false;
+		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.label2]));
+		w5.Position = 0;
+		w5.Expand = false;
+		w5.Fill = false;
 		// Container child hbox1.Gtk.Box+BoxChild
 		this.combobox1 = global::Gtk.ComboBox.NewText();
 		this.combobox1.Name = "combobox1";
 		this.hbox1.Add(this.combobox1);
-		global::Gtk.Box.BoxChild w5 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.combobox1]));
-		w5.Position = 1;
+		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.combobox1]));
+		w6.Position = 1;
+		// Container child hbox1.Gtk.Box+BoxChild
+		this.button1 = new global::Gtk.Button();
+		this.button1.CanFocus = true;
+		this.button1.Name = "button1";
+		this.button1.UseUnderline = true;
+		this.button1.Label = global::Mono.Unix.Catalog.GetString("Refresh");
+		this.hbox1.Add(this.button1);
+		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.button1]));
+		w7.Position = 2;
+		w7.Expand = false;
+		w7.Fill = false;
 		// Container child hbox1.Gtk.Box+BoxChild
 		this.conectar = new global::Gtk.Button();
 		this.conectar.Sensitive = false;
@@ -89,15 +113,15 @@ public partial class MainWindow
 		this.conectar.UseUnderline = true;
 		this.conectar.Label = global::Mono.Unix.Catalog.GetString("Conectar");
 		this.hbox1.Add(this.conectar);
-		global::Gtk.Box.BoxChild w6 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.conectar]));
-		w6.Position = 2;
-		w6.Expand = false;
-		w6.Fill = false;
+		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.hbox1[this.conectar]));
+		w8.Position = 3;
+		w8.Expand = false;
+		w8.Fill = false;
 		this.vbox1.Add(this.hbox1);
-		global::Gtk.Box.BoxChild w7 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
-		w7.Position = 2;
-		w7.Expand = false;
-		w7.Fill = false;
+		global::Gtk.Box.BoxChild w9 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.hbox1]));
+		w9.Position = 3;
+		w9.Expand = false;
+		w9.Fill = false;
 		// Container child vbox1.Gtk.Box+BoxChild
 		this.enviar = new global::Gtk.Button();
 		this.enviar.HeightRequest = 48;
@@ -107,21 +131,22 @@ public partial class MainWindow
 		this.enviar.UseUnderline = true;
 		this.enviar.Label = global::Mono.Unix.Catalog.GetString("Enviar");
 		this.vbox1.Add(this.enviar);
-		global::Gtk.Box.BoxChild w8 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.enviar]));
-		w8.Position = 3;
-		w8.Expand = false;
-		w8.Fill = false;
+		global::Gtk.Box.BoxChild w10 = ((global::Gtk.Box.BoxChild)(this.vbox1[this.enviar]));
+		w10.Position = 4;
+		w10.Expand = false;
+		w10.Fill = false;
 		this.Add(this.vbox1);
 		if ((this.Child != null))
 		{
 			this.Child.ShowAll();
 		}
 		this.DefaultWidth = 808;
-		this.DefaultHeight = 656;
+		this.DefaultHeight = 689;
 		this.Show();
 		this.DeleteEvent += new global::Gtk.DeleteEventHandler(this.OnDeleteEvent);
 		this.openAction.Activated += new global::System.EventHandler(this.OnOpenSignal);
 		this.combobox1.Changed += new global::System.EventHandler(this.OnPortChange);
+		this.button1.Clicked += new global::System.EventHandler(this.OnBuscarPuertos);
 		this.conectar.Clicked += new global::System.EventHandler(this.OnConectar);
 		this.enviar.Clicked += new global::System.EventHandler(this.OnEnviar);
 	}

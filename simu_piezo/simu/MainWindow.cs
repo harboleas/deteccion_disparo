@@ -67,6 +67,7 @@ public partial class MainWindow : Gtk.Window
             int sampling_size = int.Parse(lines[0].Split(',')[1]);
 
             float T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
+            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
 
             label1.Text = string.Format("Multiplicador: {0}", (int)(1e-3 / T_sampling));
 

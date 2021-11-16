@@ -9,11 +9,15 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_1 40
-#define UMBRAL_2 15
+#define UMBRAL_DET_SIGNAL 12   // Deteccion de signal
+#define UMBRAL_A_V1 40         // Aceptacion de Ventana 1
+#define UMBRAL_A_V2 20         // Aceptacion de Ventana 2
+#define UMBRAL_R_V2 40         // Rechazo de Ventana 2
+#define UMBRAL_R_V3 18         // Rechazo Ventana 3
 
-// Cantidad de picos a detectar en la ventana 2
-#define PICOS_VENT_2 0
+// Cantidad de picos a detectar en las ventanas 
+#define PICOS_V1 1
+
 
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 500L
@@ -44,7 +48,7 @@ enum Estados {
 Estados estado;
 unsigned long t_0, t;
 int adc_val;
-int cant_picos;  //Cantidad de picos que superan el umbral_x
+bool supero_umbral_acept;  
 ////////////////////////////////////////
 
 /////// Simulacion de muestreo ////////
@@ -88,48 +92,62 @@ void loop()
 #ifndef SIMU 
     adc_val = analogRead(ADC_PIN);    
 #else
-    adc_val = simula_muestreo();   // Solo para simulacion
+    adc_val = simula_muestreo();   
 #endif
 
 // FSM
     switch(estado)
     {
         case ESPERA_SIGNAL:
-            if (adc_val >= UMBRAL_1)
+            if (adc_val >= UMBRAL_DET_SIGNAL)
             {
                 estado = VENTANA_1;
                 Serial.println(estado);
-                t_0 = t;
+                t_0 = t; // Reset del delta t 
+                // Resetea condicion de aceptacion para la sig. ventana
+                supero_umbral_acept = false;  
             }
             break;
 
         case VENTANA_1:
+            if (adc_val >= UMBRAL_A_V1)    
+                supero_umbral_acept = true;
+
             if (t - t_0 >= (T1 * MULT))
             {
-                estado = VENTANA_2;
-                Serial.println(estado);
-                cant_picos = 0;
-                t_0 = t;
+                if (supero_umbral_acept)
+                {
+                    estado = VENTANA_2;
+                    Serial.println(estado);
+                    t_0 = t;
+                    supero_umbral_acept = false;
+                }
+                else
+                {
+                    estado = DISP_INVALIDO;
+                    Serial.println(estado);
+                    t_0 = t;
+                }
             }
             break;
 
         case VENTANA_2:
-            if (adc_val >= UMBRAL_1)
+            if (adc_val >= UMBRAL_R_V2)
             {
                 estado = DISP_INVALIDO;
                 Serial.println(estado);
                 t_0 = t;
+                break;
             }
-            else if (adc_val > UMBRAL_2)
-                cant_picos++;
+            else if (adc_val >= UMBRAL_A_V2)
+                supero_umbral_acept = true;
 
             if (t - t_0 >= (T2 * MULT))
             {
-                if(cant_picos >= PICOS_VENT_2)
+                if (supero_umbral_acept)
                 {
                     estado = VENTANA_3;
                     Serial.println(estado);
-                    cant_picos = 0;
                     t_0 = t;
                 }
                 else
@@ -142,23 +160,19 @@ void loop()
             break;
         
         case VENTANA_3:
-           if (adc_val >= UMBRAL_2)
-                cant_picos++;
-
-           if (t - t_0 >= (T3 * MULT)) 
-           {
-                if (cant_picos != 0)
-                {
-                    estado = DISP_INVALIDO;
-                    Serial.println(estado);
-                    t_0 = t;
-                }
-                else
-                {
-                    estado = DISP_OK;
-                    Serial.println(estado);
-                    t_0 = t;
-                }
+            if (adc_val >= UMBRAL_R_V3)
+            {
+                estado = DISP_INVALIDO;
+                Serial.println(estado);
+                t_0 = t;
+                break;
+            }
+ 
+            if (t - t_0 >= (T3 * MULT)) 
+            {
+                estado = DISP_OK;
+                Serial.println(estado);
+                t_0 = t;
             }
             break;
 
@@ -179,7 +193,7 @@ void loop()
                 digitalWrite(LASER_PIN, LOW);
                 estado = ESPERA_SIGNAL;
                 Serial.println(estado);
-           }
+            }
             break;
 
         default:

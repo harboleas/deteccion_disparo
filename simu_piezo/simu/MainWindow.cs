@@ -14,12 +14,13 @@ public partial class MainWindow : Gtk.Window
 
     private PlotView plotView;
     private SerialPort port;
-    private List<short> datos = new List<short>();
+    private List<short> datos_signal = new List<short>();
 
     public MainWindow() : base(Gtk.WindowType.Toplevel)
     {
         Build();
 
+        // Agrego el widget por codigo por bugs en el paquete de oxyplot
         plotView = new PlotView();
         plotView.SetSizeRequest(fixed1.Allocation.Width, fixed1.Allocation.Height);
         fixed1.Add(plotView);
@@ -27,11 +28,12 @@ public partial class MainWindow : Gtk.Window
 
         var plotModel = new PlotModel();
 
-        var puntos = new LineSeries();
-        puntos.Points.Add(new DataPoint(0, 0));
-        plotModel.Series.Add(puntos);
+        var datos_plot = new LineSeries();
+        datos_plot.Points.Add(new DataPoint(0, 0));
+        plotModel.Series.Add(datos_plot);
         plotView.Model = plotModel;
 
+        //Busca si esta el arduino esta conectado
         var port_names = Directory.GetFiles("/dev/", "ttyUSB*");
         foreach(string port_name in port_names)
             combobox1.AppendText(port_name);
@@ -67,22 +69,23 @@ public partial class MainWindow : Gtk.Window
             int sampling_size = int.Parse(lines[0].Split(',')[1]);
 
             float T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
-            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
+//            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
 
             label1.Text = string.Format("Multiplicador: {0}", (int)(1e-3 / T_sampling));
 
             const int START_DATA = 13;
             var plotModel = new PlotModel();
-            var puntos = new LineSeries();
+            var datos_plot = new LineSeries();
 
-            datos.Clear();
+            datos_signal.Clear();
             for (int i = 0; i < sampling_size; i++)
             {
-                datos.Add(short.Parse(lines[START_DATA + i].Split(',')[0]));
-                puntos.Points.Add(new DataPoint(i*T_sampling, datos[i]));
+                //Cargo los datos del archivo CSV 
+                datos_signal.Add(short.Parse(lines[START_DATA + i].Split(',')[0]));
+                datos_plot.Points.Add(new DataPoint(i*T_sampling, datos_signal[i]));
             }
 
-            plotModel.Series.Add(puntos);
+            plotModel.Series.Add(datos_plot);
             plotView.Model = plotModel;
 
         }
@@ -110,9 +113,9 @@ public partial class MainWindow : Gtk.Window
     {
         port.DiscardInBuffer();
 
-        for (int i = 0; i < datos.Count; i++)
+        for (int i = 0; i < datos_signal.Count; i++)
         {
-            var dato = BitConverter.GetBytes(datos[i]);
+            var dato = BitConverter.GetBytes(datos_signal[i]);
             port.Write(dato, 0, 2);
             if (port.BytesToRead > 0)
                 Console.WriteLine(i.ToString() + " : " + port.ReadLine());

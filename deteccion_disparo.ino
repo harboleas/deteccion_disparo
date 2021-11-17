@@ -20,9 +20,9 @@
 
 
 // Duracion de las ventanas de deteccion en microsegundos
-#define T1 500L
-#define T2 1600L
-#define T3 7500L
+#define T1 600L
+#define T2 2000L
+#define T3 8000L
 
 // Debido a que en la simulacion no puedo suministrar las muestrar
 // con la misma frecuencia que lo realiza el conversor AD
@@ -102,10 +102,13 @@ void loop()
             if (adc_val >= UMBRAL_DET_SIGNAL)
             {
                 estado = VENTANA_1;
-                Serial.println(estado);
                 t_0 = t; // Reset del delta t 
                 // Resetea condicion de aceptacion para la sig. ventana
                 supero_umbral_acept = false;  
+                
+                #ifdef SIMU 
+                  Serial.write(1);   //Para ver el cambio de estado
+                #endif 
             }
             break;
 
@@ -118,15 +121,22 @@ void loop()
                 if (supero_umbral_acept)
                 {
                     estado = VENTANA_2;
-                    Serial.println(estado);
                     t_0 = t;
                     supero_umbral_acept = false;
+
+                    #ifdef SIMU 
+                      Serial.write(1);
+                    #endif 
+
                 }
                 else
                 {
                     estado = DISP_INVALIDO;
-                    Serial.println(estado);
                     t_0 = t;
+
+                    #ifdef SIMU 
+                      Serial.write(1);
+                    #endif 
                 }
             }
             break;
@@ -135,8 +145,12 @@ void loop()
             if (adc_val >= UMBRAL_R_V2)
             {
                 estado = DISP_INVALIDO;
-                Serial.println(estado);
                 t_0 = t;
+
+                #ifdef SIMU 
+                  Serial.write(1);
+                #endif 
+                
                 break;
             }
             else if (adc_val >= UMBRAL_A_V2)
@@ -147,14 +161,20 @@ void loop()
                 if (supero_umbral_acept)
                 {
                     estado = VENTANA_3;
-                    Serial.println(estado);
                     t_0 = t;
+ 
+                    #ifdef SIMU 
+                      Serial.write(1);
+                    #endif 
                 }
                 else
                 {
                     estado = DISP_INVALIDO;
-                    Serial.println(estado);
                     t_0 = t;
+
+                    #ifdef SIMU 
+                      Serial.write(1);
+                    #endif 
                 }
             }           
             break;
@@ -163,16 +183,24 @@ void loop()
             if (adc_val >= UMBRAL_R_V3)
             {
                 estado = DISP_INVALIDO;
-                Serial.println(estado);
                 t_0 = t;
+
+                #ifdef SIMU 
+                  Serial.write(1);
+                #endif 
+
                 break;
             }
  
             if (t - t_0 >= (T3 * MULT)) 
             {
                 estado = DISP_OK;
-                Serial.println(estado);
                 t_0 = t;
+
+                #ifdef SIMU 
+                  Serial.write(1);
+                #endif 
+
             }
             break;
 
@@ -182,7 +210,11 @@ void loop()
             {
                 digitalWrite(DISP_INVALIDO_PIN, LOW);
                 estado = ESPERA_SIGNAL;
-                Serial.println(estado);
+
+                #ifdef SIMU 
+                  Serial.write(1);
+                #endif 
+
             }
             break;
 
@@ -192,7 +224,11 @@ void loop()
             {
                 digitalWrite(LASER_PIN, LOW);
                 estado = ESPERA_SIGNAL;
-                Serial.println(estado);
+
+                #ifdef SIMU 
+                  Serial.write(1);
+                #endif 
+
             }
             break;
 

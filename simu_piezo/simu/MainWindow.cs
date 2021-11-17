@@ -15,6 +15,7 @@ public partial class MainWindow : Gtk.Window
     private PlotView plotView;
     private SerialPort port;
     private List<short> datos_signal = new List<short>();
+    private float T_sampling;
 
     public MainWindow() : base(Gtk.WindowType.Toplevel)
     {
@@ -68,13 +69,13 @@ public partial class MainWindow : Gtk.Window
 
             int sampling_size = int.Parse(lines[0].Split(',')[1]);
 
-            float T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
+            T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
 //            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
 
             label1.Text = string.Format("Multiplicador: {0}", (int)(1e-3 / T_sampling));
 
             const int START_DATA = 13;
-            var plotModel = new PlotModel();
+            var plotModel = new PlotModel(); 
             var datos_plot = new LineSeries();
 
             datos_signal.Clear();
@@ -105,6 +106,12 @@ public partial class MainWindow : Gtk.Window
         if (!port.IsOpen)
         {
             port.Open();
+            // Reseteo el arduino //
+            port.DtrEnable = false;
+            Thread.Sleep(1);
+            port.DiscardInBuffer();
+            port.DtrEnable = true;
+            ////////////////////////
             enviar.Sensitive = true;
         }
     }
@@ -113,15 +120,34 @@ public partial class MainWindow : Gtk.Window
     {
         port.DiscardInBuffer();
 
+        var plotModel = plotView.Model;
+        var datos_plot2 = new LineSeries();
+        datos_plot2.Points.Add(new DataPoint(0, 0));
+
         for (int i = 0; i < datos_signal.Count; i++)
         {
             var dato = BitConverter.GetBytes(datos_signal[i]);
             port.Write(dato, 0, 2);
-            if (port.BytesToRead > 0)
-                Console.WriteLine(i.ToString() + " : " + port.ReadLine());
 
+            // Para visualizar cuando se producen los cambios de estado en el Arduino 
+            if (port.BytesToRead > 0)
+            {
+                //Console.WriteLine(i.ToString() + " : " + port.ReadLine());
+                port.ReadByte();
+                datos_plot2.Points.Add(new DataPoint((i - 1 - 3) * T_sampling, 0));
+                datos_plot2.Points.Add(new DataPoint((i - 3) * T_sampling, 40));
+                datos_plot2.Points.Add(new DataPoint((i + 1 - 3) * T_sampling, 0));
+
+            }
+            //////////////////////////////////////////////////////////////////////////
+             
             Thread.Sleep(1);
         }
+
+
+        plotModel.Series.Add(datos_plot2);
+        plotModel.InvalidatePlot(true);
+
 
     }
 

@@ -21,17 +21,8 @@
 
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 600L
-#define T2 2000L
+#define T2 3500L
 #define T3 8000L
-
-// Debido a que en la simulacion no puedo suministrar las muestrar
-// con la misma frecuencia que lo realiza el conversor AD
-// utilizo un multiplicador para la duracion de las ventanas
-#ifndef SIMU
-    #define MULT 1L
-#else
-    #define MULT 25L
-#endif
 
 // Duracion del pulso del laser en microsegundos
 #define T_LASER 500000
@@ -49,6 +40,12 @@ Estados estado;
 unsigned long t_0, t;
 int adc_val;
 bool supero_umbral_acept;  
+
+// Debido a que en la simulacion no puedo suministrar las muestrar
+// con la misma frecuencia que lo realiza el conversor AD
+// utilizo un multiplicador para la duracion de las ventanas
+unsigned long Mult;
+
 ////////////////////////////////////////
 
 /////// Simulacion de muestreo ////////
@@ -76,11 +73,21 @@ int simula_muestreo()
 
 void setup()
 {
-
-    Serial.begin(115200);  // Solo para simulacion  
+    
     pinMode(LASER_PIN, OUTPUT);
     pinMode(DISP_INVALIDO_PIN, OUTPUT);
+    Mult = 1;
     estado = ESPERA_SIGNAL;
+
+    #ifdef SIMU
+        Serial.begin(115200);  // Solo para simulacion  
+        // Lee el valor del multiplicador, el simulador antes de enviar 
+        // este dato, resetea el arduino
+        Serial.readBytes(dato.bytes, 2);
+        Mult = dato.val;
+        Serial.println(Mult);
+    #endif
+
 }
 
 void loop()
@@ -107,7 +114,7 @@ void loop()
                 supero_umbral_acept = false;  
                 
                 #ifdef SIMU 
-                  Serial.write(1);   //Para ver el cambio de estado
+                    Serial.println(estado); //Para ver el cambio de estado
                 #endif 
             }
             break;
@@ -116,7 +123,7 @@ void loop()
             if (adc_val >= UMBRAL_A_V1)    
                 supero_umbral_acept = true;
 
-            if (t - t_0 >= (T1 * MULT))
+            if (t - t_0 >= (T1 * Mult))
             {
                 if (supero_umbral_acept)
                 {
@@ -125,7 +132,7 @@ void loop()
                     supero_umbral_acept = false;
 
                     #ifdef SIMU 
-                      Serial.write(1);
+                        Serial.println(estado);
                     #endif 
 
                 }
@@ -135,7 +142,7 @@ void loop()
                     t_0 = t;
 
                     #ifdef SIMU 
-                      Serial.write(1);
+                        Serial.println(estado);
                     #endif 
                 }
             }
@@ -148,7 +155,7 @@ void loop()
                 t_0 = t;
 
                 #ifdef SIMU 
-                  Serial.write(1);
+                    Serial.println(estado);
                 #endif 
                 
                 break;
@@ -156,7 +163,7 @@ void loop()
             else if (adc_val >= UMBRAL_A_V2)
                 supero_umbral_acept = true;
 
-            if (t - t_0 >= (T2 * MULT))
+            if (t - t_0 >= (T2 * Mult))
             {
                 if (supero_umbral_acept)
                 {
@@ -164,7 +171,7 @@ void loop()
                     t_0 = t;
  
                     #ifdef SIMU 
-                      Serial.write(1);
+                        Serial.println(estado);
                     #endif 
                 }
                 else
@@ -173,7 +180,7 @@ void loop()
                     t_0 = t;
 
                     #ifdef SIMU 
-                      Serial.write(1);
+                        Serial.println(estado);
                     #endif 
                 }
             }           
@@ -186,19 +193,19 @@ void loop()
                 t_0 = t;
 
                 #ifdef SIMU 
-                  Serial.write(1);
+                    Serial.println(estado);
                 #endif 
 
                 break;
             }
  
-            if (t - t_0 >= (T3 * MULT)) 
+            if (t - t_0 >= (T3 * Mult)) 
             {
                 estado = DISP_OK;
                 t_0 = t;
 
                 #ifdef SIMU 
-                  Serial.write(1);
+                    Serial.println(estado);
                 #endif 
 
             }
@@ -212,7 +219,7 @@ void loop()
                 estado = ESPERA_SIGNAL;
 
                 #ifdef SIMU 
-                  Serial.write(1);
+                    Serial.println(estado);
                 #endif 
 
             }
@@ -226,7 +233,7 @@ void loop()
                 estado = ESPERA_SIGNAL;
 
                 #ifdef SIMU 
-                  Serial.write(1);
+                    Serial.println(estado);
                 #endif 
 
             }

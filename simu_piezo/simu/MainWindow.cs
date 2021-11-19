@@ -16,6 +16,9 @@ public partial class MainWindow : Gtk.Window
     private SerialPort port;
     private List<short> datos_signal = new List<short>();
     private float T_sampling;
+    private bool file_abierto = false;
+    private bool puerto_abierto = false;
+    private short multiplicador;
 
     public MainWindow() : base(Gtk.WindowType.Toplevel)
     {
@@ -70,9 +73,10 @@ public partial class MainWindow : Gtk.Window
             int sampling_size = int.Parse(lines[0].Split(',')[1]);
 
             T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
-//            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
+            //            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
 
-            label1.Text = string.Format("Multiplicador: {0}", (int)(1e-3 / T_sampling));
+            multiplicador = (short) (1e-3 / T_sampling);
+            label1.Text = string.Format("Multiplicador: {0}", multiplicador);
 
             const int START_DATA = 13;
             var plotModel = new PlotModel(); 
@@ -89,6 +93,9 @@ public partial class MainWindow : Gtk.Window
             plotModel.Series.Add(datos_plot);
             plotView.Model = plotModel;
 
+            file_abierto = true;
+            if (puerto_abierto)
+                setMult.Sensitive = true;
         }
 
         OpenFileDialog.Destroy();
@@ -107,12 +114,14 @@ public partial class MainWindow : Gtk.Window
         {
             port.Open();
             // Reseteo el arduino //
-            port.DtrEnable = false;
-            Thread.Sleep(1);
-            port.DiscardInBuffer();
-            port.DtrEnable = true;
+//            port.DtrEnable = false;
+//            Thread.Sleep(1);
+//            port.DiscardInBuffer();
+//            port.DtrEnable = true;
             ////////////////////////
-            enviar.Sensitive = true;
+            puerto_abierto = true;
+            if (file_abierto)
+                setMult.Sensitive = true;
         }
     }
 
@@ -132,10 +141,9 @@ public partial class MainWindow : Gtk.Window
             // Para visualizar cuando se producen los cambios de estado en el Arduino 
             if (port.BytesToRead > 0)
             {
-                //Console.WriteLine(i.ToString() + " : " + port.ReadLine());
-                port.ReadByte();
                 datos_plot2.Points.Add(new DataPoint((i - 1 - 3) * T_sampling, 0));
                 datos_plot2.Points.Add(new DataPoint((i - 3) * T_sampling, 40));
+                Console.WriteLine(((i-3)* T_sampling).ToString() + " : Estado " + port.ReadLine());
                 datos_plot2.Points.Add(new DataPoint((i + 1 - 3) * T_sampling, 0));
 
             }
@@ -155,7 +163,8 @@ public partial class MainWindow : Gtk.Window
     {
 
         combobox1.RemoveText(0);
-
+        puerto_abierto = false;
+        setMult.Sensitive = false;
         conectar.Sensitive = false;
         enviar.Sensitive = false;
         var port_names = Directory.GetFiles("/dev/", "ttyUSB*");
@@ -166,5 +175,21 @@ public partial class MainWindow : Gtk.Window
         foreach (string port_name in port_names)
             combobox1.AppendText(port_name);
 
+    }
+
+    protected void OnConfigMult(object sender, EventArgs e)
+    {
+        // Reseteo el arduino //
+        port.DtrEnable = false;
+        Thread.Sleep(1);
+        port.DiscardInBuffer();
+        port.DtrEnable = true;
+        ////////////////////////
+
+        Thread.Sleep(1500); // Espera hasta que el arduino resetee
+
+        port.Write(BitConverter.GetBytes(multiplicador), 0, 2);
+        enviar.Sensitive = true;
+        Console.WriteLine("Mult seteado en: " + port.ReadLine());
     }
 }

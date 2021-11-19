@@ -9,7 +9,7 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_DET_SIGNAL 12   // Deteccion de signal
+#define UMBRAL_DET_SIGNAL 15   // Deteccion de signal
 #define UMBRAL_A_V1 40         // Aceptacion de Ventana 1
 #define UMBRAL_A_V2 20         // Aceptacion de Ventana 2
 #define UMBRAL_R_V2 40         // Rechazo de Ventana 2
@@ -24,7 +24,7 @@
 #define T_LASER 1000L
 
 // Tiempo de espera hasta la proxima deteccion
-#define T_FIN 10000L
+#define T_FIN 25000L
 
 ////// Declaracion de variables ////////
 enum Estados {

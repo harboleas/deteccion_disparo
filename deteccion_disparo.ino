@@ -15,10 +15,6 @@
 #define UMBRAL_R_V2 40         // Rechazo de Ventana 2
 #define UMBRAL_R_V3 18         // Rechazo Ventana 3
 
-// Cantidad de picos a detectar en las ventanas 
-#define PICOS_V1 1
-
-
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 600L
 #define T2 3500L
@@ -44,7 +40,7 @@ bool supero_umbral_acept;
 // Debido a que en la simulacion no puedo suministrar las muestrar
 // con la misma frecuencia que lo realiza el conversor AD
 // utilizo un multiplicador para la duracion de las ventanas
-unsigned long Mult;
+int Mult;
 
 ////////////////////////////////////////
 

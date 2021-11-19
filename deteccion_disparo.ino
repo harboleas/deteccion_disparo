@@ -21,7 +21,10 @@
 #define T3 8000L
 
 // Duracion del pulso del laser en microsegundos
-#define T_LASER 500000
+#define T_LASER 1000L
+
+// Tiempo de espera hasta la proxima deteccion
+#define T_FIN 10000L
 
 ////// Declaracion de variables ////////
 enum Estados {
@@ -30,7 +33,8 @@ enum Estados {
   VENTANA_2,
   VENTANA_3,
   DISP_INVALIDO,
-  DISP_OK };
+  DISP_OK,
+  ESPERA_FIN};
   
 Estados estado;
 unsigned long t_0, t;
@@ -209,10 +213,10 @@ void loop()
 
         case DISP_INVALIDO:
             digitalWrite(DISP_INVALIDO_PIN, HIGH);
-            if (t - t_0 >= T_LASER)
+            if (t - t_0 >= (T_LASER * Mult))
             {
                 digitalWrite(DISP_INVALIDO_PIN, LOW);
-                estado = ESPERA_SIGNAL;
+                estado = ESPERA_FIN;
 
                 #ifdef SIMU 
                     Serial.println(estado);
@@ -223,10 +227,10 @@ void loop()
 
         case DISP_OK:
             digitalWrite(LASER_PIN, HIGH);
-            if (t - t_0 >= T_LASER)
+            if (t - t_0 >= (T_LASER * Mult))
             {
                 digitalWrite(LASER_PIN, LOW);
-                estado = ESPERA_SIGNAL;
+                estado = ESPERA_FIN;
 
                 #ifdef SIMU 
                     Serial.println(estado);
@@ -235,6 +239,19 @@ void loop()
             }
             break;
 
+        case ESPERA_FIN:
+
+            if (t - t_0 >= (T_FIN * Mult))
+            {
+                estado = ESPERA_SIGNAL;
+
+                #ifdef SIMU 
+                    Serial.println(estado);
+                #endif 
+
+            }
+            break;
+        
         default:
             estado = ESPERA_SIGNAL;
 

@@ -13,5 +13,8 @@ digraph FSM
     VENTANA_2 -> DISP_INVALIDO [ label = "t >= T2\n&&\n!supero_umbral_acept" ];
     VENTANA_3 -> DISP_INVALIDO [ label = "adc_val >= UMBRAL_R_V3" ];
     VENTANA_3 -> DISP_OK [ label = "t >= T3" ];
+    DISP_OK -> ESPERA_FIN [ label = "t >= T_LASER" ];
+    DISP_INVALIDO -> ESPERA_FIN [ label = "t >= T_LASER" ];
+    ESPERA_FIN -> ESPERA_SIGNAL [ label = "t >= T_FIN" ];
 
 }

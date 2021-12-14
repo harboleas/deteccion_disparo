@@ -14,7 +14,8 @@ public partial class MainWindow : Gtk.Window
 
     private PlotView plotView;
     private SerialPort port;
-    private List<short> datos_signal = new List<short>();
+    private List<float> datos_signal = new List<float>();
+    private float escala_tension;
     private float T_sampling;
     private bool file_abierto = false;
     private bool puerto_abierto = false;
@@ -74,6 +75,7 @@ public partial class MainWindow : Gtk.Window
 
             T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
             //            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
+            escala_tension = float.Parse(lines[4].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
 
             multiplicador = (short) (1e-3 / T_sampling);
             label1.Text = string.Format("Multiplicador: {0}", multiplicador);
@@ -85,8 +87,13 @@ public partial class MainWindow : Gtk.Window
             datos_signal.Clear();
             for (int i = 0; i < sampling_size; i++)
             {
-                //Cargo los datos del archivo CSV 
-                datos_signal.Add(short.Parse(lines[START_DATA + i].Split(',')[0]));
+                // Cargo los datos del archivo CSV 
+                var val = short.Parse(lines[START_DATA + i].Split(',')[0]);
+                // El osciloscopio usado para las mediciones es de 8 bits,
+                // para obtener el valor real de tension el rango maximo son 10 
+                // divisiones (cuadraditos del osci)
+                var val_real = (escala_tension * 10 / 256) * val;
+                datos_signal.Add(val_real);
                 datos_plot.Points.Add(new DataPoint(i*T_sampling, datos_signal[i]));
             }
 
@@ -135,14 +142,18 @@ public partial class MainWindow : Gtk.Window
 
         for (int i = 0; i < datos_signal.Count; i++)
         {
-            var dato = BitConverter.GetBytes(datos_signal[i]);
+            // simulo la conversion de 10 bits del arduino para enviar los datos
+            short val = (short)(datos_signal[i] * 1024 / 5);
+            ////////////////////////////////////////////////////////////////////
+
+            var dato = BitConverter.GetBytes(val);
             port.Write(dato, 0, 2);
 
             // Para visualizar cuando se producen los cambios de estado en el Arduino 
             if (port.BytesToRead > 0)
             {
                 datos_plot2.Points.Add(new DataPoint((i - 1 - 3) * T_sampling, 0));
-                datos_plot2.Points.Add(new DataPoint((i - 3) * T_sampling, 40));
+                datos_plot2.Points.Add(new DataPoint((i - 3) * T_sampling, 5));
                 Console.WriteLine(((i-3)* T_sampling).ToString() + " : Estado " + port.ReadLine());
                 datos_plot2.Points.Add(new DataPoint((i + 1 - 3) * T_sampling, 0));
 

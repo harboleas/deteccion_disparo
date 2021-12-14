@@ -9,11 +9,11 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_DET_SIGNAL 15   // Deteccion de signal
-#define UMBRAL_A_V1 40         // Aceptacion de Ventana 1
-#define UMBRAL_A_V2 20         // Aceptacion de Ventana 2
-#define UMBRAL_R_V2 40         // Rechazo de Ventana 2
-#define UMBRAL_R_V3 18         // Rechazo Ventana 3
+#define UMBRAL_DET_SIGNAL 240   // Deteccion de signal
+#define UMBRAL_A_V1 640         // Aceptacion de Ventana 1
+#define UMBRAL_A_V2 320         // Aceptacion de Ventana 2
+#define UMBRAL_R_V2 640         // Rechazo de Ventana 2
+#define UMBRAL_R_V3 288         // Rechazo Ventana 3
 
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 600L

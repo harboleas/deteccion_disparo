@@ -8,7 +8,7 @@ def read_csv(file_name, cap_resol):
     datos = np.array([int(x) for x in lines[13:-1]])
     # desplazo los datos y hago la conversion a 16 bits
     offset = 2**(cap_resol - 1)
-    return (datos + offset) * 2**(16-cap_resol)
+    return (datos + offset) * 2**(14-cap_resol)
 
 def gen_raf(file_name, datos):
     # interpolacion lineal de los datos para alcanzar los 2**14

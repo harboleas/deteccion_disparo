@@ -1,7 +1,7 @@
 // Deteccion de disparo para SIMTAP
 
 // Descomentar la siguiente linea para simulacion del piezo  
-#define SIMU
+//#define SIMU
 
 // Definicion de pines
 #define ADC_PIN 3
@@ -9,14 +9,14 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_DET_SIGNAL 240   // Deteccion de signal
+#define UMBRAL_DET_SIGNAL 90   // Deteccion de signal
 #define UMBRAL_A_V1 640         // Aceptacion de Ventana 1
 #define UMBRAL_A_V2 320         // Aceptacion de Ventana 2
 #define UMBRAL_R_V2 640         // Rechazo de Ventana 2
 #define UMBRAL_R_V3 288         // Rechazo Ventana 3
 
 // Duracion de las ventanas de deteccion en microsegundos
-#define T1 600L
+#define T1 480L
 #define T2 3500L
 #define T3 8000L
 

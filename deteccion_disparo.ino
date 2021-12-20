@@ -9,7 +9,7 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbrales para la deteccion
-#define UMBRAL_DET_SIGNAL 90   // Deteccion de signal
+#define UMBRAL_DET_SIGNAL 216   // Deteccion de signal
 #define UMBRAL_A_V1 640         // Aceptacion de Ventana 1
 #define UMBRAL_A_V2 320         // Aceptacion de Ventana 2
 #define UMBRAL_R_V2 640         // Rechazo de Ventana 2
@@ -71,6 +71,17 @@ int simula_muestreo()
 }
 ////////////////////////////////////////
 
+
+#define FASTADC 1
+
+// defines for setting and clearing register bits
+#ifndef cbi
+#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~_BV(bit))
+#endif
+#ifndef sbi
+#define sbi(sfr, bit) (_SFR_BYTE(sfr) |= _BV(bit))
+#endif
+
 void setup()
 {
     
@@ -78,6 +89,13 @@ void setup()
     pinMode(DISP_INVALIDO_PIN, OUTPUT);
     Mult = 1;
     estado = ESPERA_SIGNAL;
+
+    #ifdef FASTADC
+      // set prescale to 16
+      sbi(ADCSRA,ADPS2) ;
+      cbi(ADCSRA,ADPS1) ;
+      cbi(ADCSRA,ADPS0) ;
+    #endif
 
     #ifdef SIMU
         Serial.begin(115200);  // Solo para simulacion  

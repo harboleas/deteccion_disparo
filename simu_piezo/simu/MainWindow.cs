@@ -15,7 +15,6 @@ public partial class MainWindow : Gtk.Window
     private PlotView plotView;
     private SerialPort port;
     private List<float> datos_signal = new List<float>();
-    private float escala_tension;
     private float T_sampling;
     private bool file_abierto = false;
     private bool puerto_abierto = false;
@@ -71,16 +70,19 @@ public partial class MainWindow : Gtk.Window
 
             var lines = File.ReadAllLines(OpenFileDialog.Filename);
 
-            int sampling_size = int.Parse(lines[0].Split(',')[1]);
+            int sampling_size = lines.Length - 2;
 
-            T_sampling = float.Parse(lines[10].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
-            //            Console.WriteLine("Muestreo a: " + T_sampling.ToString());
-            escala_tension = float.Parse(lines[4].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
+            var t1 = lines[2].Split(',')[0];
+            var t2 = lines[sampling_size + 1].Split(',')[0];
+
+            T_sampling = (float.Parse(t2, CultureInfo.InvariantCulture.NumberFormat) - float.Parse(t1, CultureInfo.InvariantCulture.NumberFormat)) / sampling_size;
+
+            Console.WriteLine(T_sampling);
 
             multiplicador = (short) (1e-3 / T_sampling);
             label1.Text = string.Format("Multiplicador: {0}", multiplicador);
 
-            const int START_DATA = 13;
+            const int START_DATA = 2;
             var plotModel = new PlotModel(); 
             var datos_plot = new LineSeries();
 
@@ -88,12 +90,8 @@ public partial class MainWindow : Gtk.Window
             for (int i = 0; i < sampling_size; i++)
             {
                 // Cargo los datos del archivo CSV 
-                var val = short.Parse(lines[START_DATA + i].Split(',')[0]);
-                // El osciloscopio usado para las mediciones es de 8 bits,
-                // para obtener el valor real de tension el rango maximo son 10 
-                // divisiones (cuadraditos del osci)
-                var val_real = (escala_tension * 10 / 256) * val;
-                datos_signal.Add(val_real);
+                var val = float.Parse(lines[START_DATA + i].Split(',')[1], CultureInfo.InvariantCulture.NumberFormat);
+                datos_signal.Add(val);
                 datos_plot.Points.Add(new DataPoint(i*T_sampling, datos_signal[i]));
             }
 

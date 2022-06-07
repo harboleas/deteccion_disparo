@@ -6,13 +6,10 @@ digraph FSM
     DISP_INVALIDO [ color = red style=filled ];
     ESPERA_SIGNAL -> ESPERA_SIGNAL;
     ESPERA_SIGNAL -> VENTANA_1  [ label = "adc_val >= UMBRAL_DET_SIGNAL" ];
-    VENTANA_1 -> VENTANA_2 [ label = "t >= T1\n&&\nsupero_umbral_acept" ];
-    VENTANA_1 -> DISP_INVALIDO [ label = "t >= T1\n&&\n!supero_umbral_acept" ];
-    VENTANA_2 -> DISP_INVALIDO [ label = "adc_val >= UMBRAL_R_V2" ];
-    VENTANA_2 -> VENTANA_3 [ label = "t >= T2\n&&\nsupero_umbral_acept" ];
-    VENTANA_2 -> DISP_INVALIDO [ label = "t >= T2\n&&\n!supero_umbral_acept" ];
-    VENTANA_3 -> DISP_INVALIDO [ label = "adc_val >= UMBRAL_R_V3" ];
-    VENTANA_3 -> DISP_OK [ label = "t >= T3" ];
+    VENTANA_1 -> VENTANA_2 [ label = "t >= T1\n&&\ncant_detec > 0" ];
+    VENTANA_1 -> DISP_INVALIDO [ label = "t >= T1\n&&\ncant_detec == 0" ];
+    VENTANA_2 -> DISP_INVALIDO [ label = "t >= T2\n&&\ncant_detec > 0" ];
+    VENTANA_2 -> DISP_OK [ label = "t >= T2\n&&\ncant_detec == 0" ];
     DISP_OK -> ESPERA_FIN [ label = "t >= T_LASER" ];
     DISP_INVALIDO -> ESPERA_FIN [ label = "t >= T_LASER" ];
     ESPERA_FIN -> ESPERA_SIGNAL [ label = "t >= T_FIN" ];

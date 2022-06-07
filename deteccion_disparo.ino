@@ -130,11 +130,12 @@ void loop()
             break;
 
         case VENTANA_1:
-            if (adc_val >= UMBRAL_DET_SIGNAL)    
-                cant_detec++;
+//            if (adc_val >= UMBRAL_DET_SIGNAL)    
+//                cant_detec++;
 
             if (t - t_0 >= (T1 * Mult))
             {
+/*
                 if (cant_detec > 0)
                 {
                     estado = VENTANA_2;
@@ -156,6 +157,16 @@ void loop()
                         Serial.println(estado);
                     #endif 
                 }
+*/
+                    estado = VENTANA_2;
+                    t_0 = t;
+                    cant_detec = 0;
+
+                    #ifdef SIMU 
+                        Serial.println(estado);
+                    #endif 
+
+
             }
             break;
 

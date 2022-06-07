@@ -141,7 +141,13 @@ public partial class MainWindow : Gtk.Window
         for (int i = 0; i < datos_signal.Count; i++)
         {
             // simulo la conversion de 10 bits del arduino para enviar los datos
-            short val = (short)(datos_signal[i] * 1024 / 5);
+            short val;
+            if (datos_signal[i] <= 0)
+                val = 0;
+            else if (datos_signal[i] <= 5)
+                val = (short)(datos_signal[i] * 1024 / 5);
+            else
+                val = 5 * 1024 / 5;
             ////////////////////////////////////////////////////////////////////
 
             var dato = BitConverter.GetBytes(val);

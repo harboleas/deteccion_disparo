@@ -192,6 +192,7 @@ void loop()
             {
                 digitalWrite(DISP_INVALIDO_PIN, LOW);
                 estado = ESPERA_FIN;
+                t_0 = t;
 
                 #ifdef SIMU 
                     Serial.println(estado);
@@ -206,6 +207,7 @@ void loop()
             {
                 digitalWrite(LASER_PIN, LOW);
                 estado = ESPERA_FIN;
+                t_0 = t;
 
                 #ifdef SIMU 
                     Serial.println(estado);

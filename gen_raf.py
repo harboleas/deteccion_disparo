@@ -1,37 +1,26 @@
 # genera un archivo .RAF para el generador de onda RIGOL
 import numpy as np
 
-def read_csv(file_name, cap_resol):
-    "Abre archivos creados con osci."
+def read_csv(file_name):
+    "Abre archivos creados con osci. RIGOL"
     f = open(file_name, "r")
     lines = f.readlines()
-    n = int(lines[0].split(",")[1])
-    T = float(lines[10].split(",")[1])
-    escala_V = float(lines[4].split(",")[1])
-    V_unit = lines[3].split(",")[1]
-    T_unit = lines[6].split(",")[1]
-    print("Tiempo total:", n*T, T_unit)
-    print("vmin:", -escala_V * 5, V_unit)
-    print("Vmax:", escala_V * 5, V_unit)
-    datos = np.array([int(x) for x in lines[13:-1]])
-    # desplazo los datos, para obtener solo valores positivos
-    # y luego hago la conversion de resolucion a 14 bits
-    offset = 2**(cap_resol - 1)
-    return (datos + offset) * 2**(14-cap_resol)
+    n = len(lines) - 2
+    T = (float(lines[-1].split(",")[0]) - float(lines[2].split(",")[0])) / n
+    print("Tiempo total:", n*T, " s")
+    datos = []
+    for line in lines[2:]:
+        datos.append(float(line.split(",")[1]))
 
+    datos = np.array(datos)
+    min_ = datos.min()
+    datos = datos - min_
+    max_ = datos.max()
+    resol = max_ / 2**14
 
-def recorta(datos, val_min, val_max):
+    datos_14b = np.array([int(x/resol) for x in datos])
 
-    datos_proc = []
-    for val in datos:
-        if val <= val_min:
-           datos_proc.append(val_min)
-        elif val >= val_max:
-            datos_proc.append(val_max)
-        else:
-            datos_proc.append(val)
-
-    return np.array(datos_proc)
+    return datos_14b
 
 
 def gen_raf(file_name, datos):

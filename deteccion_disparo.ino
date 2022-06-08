@@ -1,7 +1,7 @@
 // Deteccion de disparo para SIMTAP
 
 // Descomentar la siguiente linea para simulacion del piezo  
-#define SIMU
+//#define SIMU
 
 // Definicion de pines
 #define ADC_PIN 3

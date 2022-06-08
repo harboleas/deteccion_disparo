@@ -14,6 +14,10 @@ def read_csv(file_name):
 
     datos = np.array(datos)
     min_ = datos.min()
+    max_ = datos.max()
+    print("Vmin: ", min_, " V")
+    print("Vmax: ", max_, " V")
+
     datos = datos - min_
     max_ = datos.max()
     resol = max_ / 2**14

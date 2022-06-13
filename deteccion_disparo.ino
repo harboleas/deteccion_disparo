@@ -10,7 +10,7 @@
 
 // Umbral para la deteccion
 #define UMBRAL_DET_SIGNAL 205   // 1 Volts
-#define UMBRAL_DISPARO 615   // 3 Volts
+#define UMBRAL_DISPARO 614  // 3 Volts
 
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 23000L

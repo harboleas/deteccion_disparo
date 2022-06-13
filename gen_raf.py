@@ -15,8 +15,23 @@ def read_csv(file_name):
     datos = np.array(datos)
     min_ = datos.min()
     max_ = datos.max()
-    print("Vmin: ", min_, " V")
-    print("Vmax: ", max_, " V")
+    # Recorto porque el generador tiene una ampl. de -10 a +10 V
+    if (min_ < -10 or max_ > 10):
+        for i in range(len(datos)):
+            if datos[i] < -10:
+                datos[i] = -10
+            if datos[i] > 10:
+                datos[i] = 10
+
+        min_ = datos.min()
+        max_ = datos.max()
+        print("Vmin: ", min_, " V")
+        print("Vmax: ", max_, " V")
+
+
+    else:
+        print("Vmin: ", min_, " V")
+        print("Vmax: ", max_, " V")
 
     datos = datos - min_
     max_ = datos.max()

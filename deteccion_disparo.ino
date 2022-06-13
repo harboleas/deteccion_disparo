@@ -9,7 +9,8 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbral para la deteccion
-#define UMBRAL_DET_SIGNAL 205   // 1 Volt
+#define UMBRAL_DET_SIGNAL 205   // 1 Volts
+#define UMBRAL_DISPARO 615   // 3 Volts
 
 // Duracion de las ventanas de deteccion en microsegundos
 #define T1 23000L
@@ -26,6 +27,7 @@ enum Estados {
   ESPERA_SIGNAL,
   VENTANA_1,
   VENTANA_2,
+  ESPERA_T2,
   DISP_INVALIDO,
   DISP_OK,
   ESPERA_FIN};
@@ -130,12 +132,12 @@ void loop()
             break;
 
         case VENTANA_1:
-//            if (adc_val >= UMBRAL_DET_SIGNAL)    
-//                cant_detec++;
+            if (adc_val >= UMBRAL_DISPARO)    
+                cant_detec++;
 
             if (t - t_0 >= (T1 * Mult))
             {
-/*
+
                 if (cant_detec > 0)
                 {
                     estado = VENTANA_2;
@@ -149,7 +151,7 @@ void loop()
                 }
                 else
                 {
-                    estado = DISP_INVALIDO;
+                    estado = ESPERA_T2;
                     t_0 = t;
                     cant_detec = 0;
 
@@ -157,19 +159,23 @@ void loop()
                         Serial.println(estado);
                     #endif 
                 }
-*/
-                    estado = VENTANA_2;
+                    
+            }
+            break;
+
+        case ESPERA_T2:
+            if (t - t_0 >= (T2 * Mult))
+            {
+                    estado = DISP_INVALIDO;
                     t_0 = t;
                     cant_detec = 0;
 
                     #ifdef SIMU 
                         Serial.println(estado);
                     #endif 
-
-
             }
             break;
-
+    
         case VENTANA_2:
             if (adc_val >= UMBRAL_DET_SIGNAL)
                 cant_detec++;

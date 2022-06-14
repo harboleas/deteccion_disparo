@@ -9,12 +9,13 @@
 #define DISP_INVALIDO_PIN 2
 
 // Umbral para la deteccion
-#define UMBRAL_DET_SIGNAL 205   // 1 Volts
-#define UMBRAL_DISPARO 614  // 3 Volts
+#define UMBRAL_DET_SIGNAL 92   // 0.45 Volts
+#define UMBRAL_DISPARO 870// 4.25 Volts
 
 // Duracion de las ventanas de deteccion en microsegundos
-#define T1 23000L
-#define T2 40000L
+#define T1 4000L
+#define T2 19000L
+#define T3 5000L
 
 // Duracion del pulso del laser en microsegundos
 #define T_LASER 1000L
@@ -27,7 +28,7 @@ enum Estados {
   ESPERA_SIGNAL,
   VENTANA_1,
   VENTANA_2,
-  ESPERA_T2,
+  VENTANA_3,
   DISP_INVALIDO,
   DISP_OK,
   ESPERA_FIN};
@@ -35,7 +36,7 @@ enum Estados {
 Estados estado;
 unsigned long t_0, t;
 int adc_val;
-int cant_detec;
+bool signal_detect;
 
 // Debido a que en la simulacion no puedo suministrar las muestrar
 // con la misma frecuencia que lo realiza el conversor AD
@@ -124,7 +125,7 @@ void loop()
             {
                 estado = VENTANA_1;
                 t_0 = t; // Reset del delta t 
-                cant_detec = 0;
+                signal_detect = 0;
                 #ifdef SIMU 
                     Serial.println(estado); //Para ver el cambio de estado
                 #endif 
@@ -133,16 +134,16 @@ void loop()
 
         case VENTANA_1:
             if (adc_val >= UMBRAL_DISPARO)    
-                cant_detec++;
+                signal_detect = true;
 
             if (t - t_0 >= (T1 * Mult))
             {
 
-                if (cant_detec > 0)
+                if (signal_detect)
                 {
-                    estado = VENTANA_2;
+                    estado = DISP_INVALIDO;
                     t_0 = t;
-                    cant_detec = 0;
+                    signal_detect = false;
 
                     #ifdef SIMU 
                         Serial.println(estado);
@@ -151,9 +152,9 @@ void loop()
                 }
                 else
                 {
-                    estado = ESPERA_T2;
+                    estado = VENTANA_2;
                     t_0 = t;
-                    cant_detec = 0;
+                    signal_detect = false;
 
                     #ifdef SIMU 
                         Serial.println(estado);
@@ -163,29 +164,48 @@ void loop()
             }
             break;
 
-        case ESPERA_T2:
+        case VENTANA_2:
+            if (adc_val >= UMBRAL_DISPARO)    
+                signal_detect = true;
+
             if (t - t_0 >= (T2 * Mult))
             {
-                    estado = DISP_INVALIDO;
+
+                if (signal_detect)
+                {
+                    estado = VENTANA_3;
                     t_0 = t;
-                    cant_detec = 0;
+                    signal_detect = false;
 
                     #ifdef SIMU 
                         Serial.println(estado);
                     #endif 
+
+                }
+                else
+                {
+                    estado = DISP_INVALIDO;
+                    t_0 = t;
+                    signal_detect = false;
+
+                    #ifdef SIMU 
+                        Serial.println(estado);
+                    #endif 
+                }
             }
             break;
     
-        case VENTANA_2:
+        case VENTANA_3:
             if (adc_val >= UMBRAL_DET_SIGNAL)
-                cant_detec++;
+                signal_detect = true;
 
-            if (t - t_0 >= (T2 * Mult))
+            if (t - t_0 >= (T3 * Mult))
             {
-                if (cant_detec == 0)
+                if (!signal_detect)
                 {
                     estado = DISP_OK;
                     t_0 = t;
+                    signal_detect = false;
  
                     #ifdef SIMU 
                         Serial.println(estado);
@@ -195,6 +215,7 @@ void loop()
                 {
                     estado = DISP_INVALIDO;
                     t_0 = t;
+                    signal_detect = false;
 
                     #ifdef SIMU 
                         Serial.println(estado);

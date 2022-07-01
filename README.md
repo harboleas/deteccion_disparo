@@ -24,3 +24,7 @@ Maquina de estados para la deteccion de la señal de disparo
 ![FSM](fsm.jpg)
 
 
+* Diseño del PCB
+
+![PCB](deteccion_disparo.pdf)
+

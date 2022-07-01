@@ -26,5 +26,5 @@ Maquina de estados para la deteccion de la señal de disparo
 
 * Diseño del PCB
 
-![PCB](deteccion_disparo.pdf)
+![PCB](deteccion_disparo.ps)
 

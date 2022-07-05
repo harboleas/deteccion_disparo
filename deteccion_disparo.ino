@@ -6,10 +6,11 @@
 // Definicion de pines
 #define ADC_PIN 3
 #define LASER_PIN 3
+#define TESTIGO_PIN 13
 #define DISP_INVALIDO_PIN 2
 
 // Umbral para la deteccion
-#define UMBRAL_DET_SIGNAL 92   // 0.45 Volts
+#define UMBRAL_DET_SIGNAL 27 // 0.13V    92   // 0.45 Volts
 #define UMBRAL_DISPARO 870// 4.25 Volts
 
 // Duracion de las ventanas de deteccion en microsegundos
@@ -18,7 +19,7 @@
 #define T3 5000L
 
 // Duracion del pulso del laser en microsegundos
-#define T_LASER 1000L
+#define T_LASER 1500L
 
 // Tiempo de espera hasta la proxima deteccion
 #define T_FIN 150000L
@@ -83,6 +84,7 @@ void setup()
 {
     
     pinMode(LASER_PIN, OUTPUT);
+    pinMode(TESTIGO_PIN, OUTPUT);
     pinMode(DISP_INVALIDO_PIN, OUTPUT);
     Mult = 1;
     estado = ESPERA_SIGNAL;
@@ -241,9 +243,11 @@ void loop()
 
         case DISP_OK:
             digitalWrite(LASER_PIN, HIGH);
+            digitalWrite(TESTIGO_PIN, HIGH);
             if (t - t_0 >= (T_LASER * Mult))
             {
                 digitalWrite(LASER_PIN, LOW);
+                digitalWrite(TESTIGO_PIN, LOW);
                 estado = ESPERA_FIN;
                 t_0 = t;
 
